@@ -1,0 +1,22 @@
+{
+  "id": "party-sidebar",
+  "title": "Party Sidebar",
+  "description": "A dynamic party sidebar displaying character portraits, HP, AC, movement, and active effects with filtered token refreshes and D&D 5e effect icon fallbacks.",
+  "version": "1.1.3",
+  "authors": [
+    {
+      "name": "Party Sidebar contributors"
+    }
+  ],
+  "compatibility": {
+    "minimum": "14.369",
+    "verified": "14.369",
+    "maximum": "14.999"
+  },
+  "scripts": [
+    "scripts/party-sidebar.js"
+  ],
+  "styles": [
+    "styles/party-sidebar.css"
+  ]
+}

@@ -1,0 +1,83 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'module.json'
+      - 'scripts/**'
+      - 'styles/**'
+      - 'README.md'
+      - 'CHANGELOG.md'
+      - '.github/workflows/build-release.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Validate module
+        id: validate
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check scripts/party-sidebar.js
+          node <<'NODE'
+          const fs = require('fs');
+          const manifest = JSON.parse(fs.readFileSync('module.json', 'utf8'));
+          if (manifest.id !== 'party-sidebar') throw new Error('Unexpected module id');
+          if (!/^\d+\.\d+\.\d+$/.test(manifest.version)) throw new Error('Invalid semantic version');
+          for (const path of [...(manifest.scripts || []), ...(manifest.esmodules || []), ...(manifest.styles || [])]) {
+            if (!fs.existsSync(path)) throw new Error(`Missing manifest path: ${path}`);
+          }
+          console.log(`Validated ${manifest.id} v${manifest.version}`);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `version=${manifest.version}\n`);
+          NODE
+
+      - name: Build module archive
+        env:
+          VERSION: ${{ steps.validate.outputs.version }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist/party-sidebar
+          cp module.json README.md dist/party-sidebar/
+          [ ! -f LICENSE ] || cp LICENSE dist/party-sidebar/
+          [ ! -f CHANGELOG.md ] || cp CHANGELOG.md dist/party-sidebar/
+          cp -R scripts styles dist/party-sidebar/
+          cd dist
+          zip -r ../module.zip party-sidebar
+          cd ..
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: party-sidebar-${{ steps.validate.outputs.version }}
+          path: |
+            module.zip
+            module.json
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.validate.outputs.version }}
+        run: |
+          set -euo pipefail
+          TAG="v${VERSION}"
+          if gh release view "${TAG}" >/dev/null 2>&1; then
+            gh release upload "${TAG}" module.json module.zip --clobber
+          else
+            gh release create "${TAG}" module.json module.zip \
+              --title "${TAG}" \
+              --generate-notes
+          fi

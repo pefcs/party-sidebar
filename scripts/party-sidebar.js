@@ -1,5 +1,5 @@
 // ============================================
-// party-sidebar.js (v1.2.0 - interactive layout)
+// party-sidebar.js (v1.2.3 - persistent collapsed mode)
 // ============================================
 
 Hooks.once("init", function () {

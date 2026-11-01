@@ -62,7 +62,8 @@ class PartySidebar {
   }
 
   static getLayout() {
-    const raw = game.settings.get("party-sidebar", "layout") || {};
+    // Keep a local copy for immediate UI feedback while Foundry persists it.
+    const raw = this._savedLayout || game.settings.get("party-sidebar", "layout") || {};
     return {
       orientation: raw.orientation === "horizontal" ? "horizontal" : "vertical",
       docked: raw.docked !== false,
@@ -195,6 +196,7 @@ class PartySidebar {
     });
 
     container.appendChild(toolbar);
+    this.updateToolbarControls(container);
   }
 
   static toggleConfigPopup(container) {
@@ -236,7 +238,7 @@ class PartySidebar {
 
     addSlider("Portrait size", 75, 200, size, " px", value => {
       game.settings.set("party-sidebar", "portraitSize", value);
-      this.render();
+      this.applyPortraitSize(value);
     });
 
     addSlider("Vertical position", 0, 1000, offset, " px", value => {

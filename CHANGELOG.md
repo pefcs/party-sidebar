@@ -14,3 +14,9 @@
 - Replaced the up/down nudge buttons with a configuration popup.
 - Added live portrait-size and vertical-position sliders to the popup.
 - The toolbar configuration button now opens the popup instead of Foundry's module settings.
+
+## 1.2.2
+- Anchored the configuration popup to the viewport so it stays in place while the sidebar moves.
+- Portrait-size slider now resizes existing portrait elements immediately without rebuilding the sidebar.
+- Lock and unlock states now use distinct icons, tooltips, and styling.
+- Orientation switching now updates the existing sidebar layout directly without a full actor/portrait rebuild.

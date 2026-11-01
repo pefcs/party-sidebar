@@ -29,7 +29,7 @@ Hooks.once("init", function () {
     scope: "client",
     config: false,
     type: Object,
-    default: { orientation: "vertical", docked: true, locked: true, x: null, y: null }
+    default: { orientation: "vertical", docked: true, locked: true, collapsed: false, x: null, y: null }
   });
 });
 
@@ -68,6 +68,7 @@ class PartySidebar {
       orientation: raw.orientation === "horizontal" ? "horizontal" : "vertical",
       docked: raw.docked !== false,
       locked: raw.locked !== false,
+      collapsed: raw.collapsed === true,
       x: Number.isFinite(raw.x) ? raw.x : null,
       y: Number.isFinite(raw.y) ? raw.y : null
     };
@@ -112,11 +113,31 @@ class PartySidebar {
     return el;
   }
 
-  static render() {
+  static render(force = false) {
     const container = this.getContainer();
-    if (!container || (this._isHovered && container.childElementCount > 0)) return;
+    if (!container || (!force && this._isHovered && container.childElementCount > 0)) return;
 
     const layout = this.getLayout();
+    if (layout.collapsed) {
+      container.innerHTML = "";
+      container.classList.add("is-collapsed");
+      const expandButton = document.createElement("button");
+      expandButton.type = "button";
+      expandButton.className = "party-sidebar-expand";
+      expandButton.title = "Expand Party Sidebar";
+      expandButton.setAttribute("aria-label", "Expand Party Sidebar");
+      expandButton.innerHTML = '<i class="fa-solid fa-users"></i>';
+      expandButton.addEventListener("click", event => {
+        event.preventDefault();
+        event.stopPropagation();
+        this.saveLayout({ collapsed: false });
+        this.render(true);
+      });
+      container.appendChild(expandButton);
+      this.applyLayout();
+      return;
+    }
+    container.classList.remove("is-collapsed");
     const size = Math.clamp(game.settings.get("party-sidebar", "portraitSize"), 75, 200);
     const actors = game.users.players.map(u => u.character).filter(Boolean);
     const existingPopup = container.querySelector(".party-sidebar-config-popup");
@@ -194,6 +215,11 @@ class PartySidebar {
     makeButton('<i class="fa-solid fa-sliders"></i>', "Party Sidebar configuration", () => {
       this.toggleConfigPopup(container);
     });
+
+    makeButton('<i class="fa-solid fa-compress"></i>', "Collapse Party Sidebar to one icon", () => {
+      this.saveLayout({ collapsed: true });
+      this.render(true);
+    }).classList.add("collapse-control");
 
     container.appendChild(toolbar);
     this.updateToolbarControls(container);

@@ -242,3 +242,36 @@
   color: #ffd27a;
   border-color: rgba(255, 190, 90, 0.75);
 }
+
+
+/* Collapsed mode: a single persistent expand button. */
+#party-sidebar-container.is-collapsed {
+  width: 38px;
+  height: 38px;
+  display: block;
+  z-index: 10000;
+}
+#party-sidebar-container.is-collapsed .party-sidebar-expand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  margin: 0;
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 8px;
+  color: #fff;
+  background: rgba(20,20,20,0.9);
+  box-shadow: 0 2px 9px rgba(0,0,0,0.6);
+  font-size: 19px;
+  cursor: pointer;
+}
+#party-sidebar-container.is-collapsed .party-sidebar-expand:hover {
+  color: #f0c674;
+  background: rgba(45,45,45,0.98);
+}
+#party-sidebar-container.is-collapsed .party-sidebar-expand:focus-visible {
+  outline: 2px solid #f0c674;
+  outline-offset: 2px;
+}

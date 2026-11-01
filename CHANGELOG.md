@@ -20,3 +20,8 @@
 - Portrait-size slider now resizes existing portrait elements immediately without rebuilding the sidebar.
 - Lock and unlock states now use distinct icons, tooltips, and styling.
 - Orientation switching now updates the existing sidebar layout directly without a full actor/portrait rebuild.
+
+## 1.2.3
+- Added a toolbar control to collapse the party sidebar into a single party icon.
+- Clicking the collapsed icon restores the full party sidebar.
+- Collapsed/expanded state is saved per client and persists across reloads.

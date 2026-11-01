@@ -218,3 +218,27 @@
 #party-sidebar-container .party-sidebar-slider > span { display: flex; justify-content: space-between; align-items: center; }
 #party-sidebar-container .party-sidebar-slider strong { color: #f0c674; font-variant-numeric: tabular-nums; }
 #party-sidebar-container .party-sidebar-slider input[type="range"] { width: 100%; margin: 0; accent-color: #d0a85c; }
+
+
+/* Keep the portrait image scaled to the live wrapper dimensions. */
+#party-sidebar-container .party-portrait > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The popup uses viewport coordinates and does not follow sidebar movement. */
+#party-sidebar-container .party-sidebar-config-popup {
+  position: fixed;
+}
+
+/* Make the current lock state unmistakable. */
+#party-sidebar-container .party-sidebar-control.lock-control.is-locked {
+  color: #b6e3b6;
+  border-color: rgba(130, 205, 130, 0.65);
+}
+#party-sidebar-container .party-sidebar-control.lock-control.is-unlocked {
+  color: #ffd27a;
+  border-color: rgba(255, 190, 90, 0.75);
+}

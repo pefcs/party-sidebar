@@ -134,7 +134,6 @@ class PartySidebar {
     toolbar.setAttribute("aria-label", "Party Sidebar controls");
 
     const layout = this.getLayout();
-
     const makeButton = (icon, title, click, context = null) => {
       const button = document.createElement("button");
       button.type = "button";
@@ -156,17 +155,18 @@ class PartySidebar {
       return button;
     };
 
-    makeButton('<i class="fa-solid fa-grip"></i>', "Drag sidebar up or down", () => {}, null)
-      .classList.add("drag-handle");
+    const grip = makeButton('<i class="fa-solid fa-grip"></i>', "Drag sidebar", () => {});
+    grip.classList.add("drag-handle");
+    grip.addEventListener("pointerdown", event => this.startDrag(event, container));
 
     const lockButton = makeButton(
       layout.locked ? '<i class="fa-solid fa-lock"></i>' : '<i class="fa-solid fa-lock-open"></i>',
-      layout.docked ? (layout.locked ? "Unlock and move sidebar" : "Lock sidebar in place") : (layout.locked ? "Unlock and move sidebar" : "Lock sidebar in place"),
+      layout.docked ? "Unlock and move sidebar" : (layout.locked ? "Unlock sidebar position" : "Lock sidebar position"),
       () => {
         const current = this.getLayout();
         if (current.docked) {
-          // First left-click undocks; the next left-click locks the free position.
-          this.saveLayout({ docked: false, locked: false, x: container.offsetLeft, y: container.offsetTop });
+          const rect = container.getBoundingClientRect();
+          this.saveLayout({ docked: false, locked: false, x: rect.left, y: rect.top });
         } else {
           this.saveLayout({ locked: !current.locked });
         }
@@ -188,20 +188,67 @@ class PartySidebar {
       }
     );
 
-    makeButton('<i class="fa-solid fa-minus"></i>', "Move sidebar up", () => this.moveBy(0, -20));
-    makeButton('<i class="fa-solid fa-plus"></i>', "Move sidebar down", () => this.moveBy(0, 20));
-
-    makeButton('<i class="fa-solid fa-gear"></i>', "Open Party Sidebar settings", () => {
-      const app = game.settings?.sheet;
-      if (app?.render) app.render(true);
-      else ui.settings?.render(true);
+    makeButton('<i class="fa-solid fa-sliders"></i>', "Party Sidebar configuration", () => {
+      this.toggleConfigPopup(container);
     });
 
-    // Only the grip initiates dragging; it does not interfere with portrait clicks.
-    const grip = toolbar.querySelector(".drag-handle");
-    grip.addEventListener("pointerdown", event => this.startDrag(event, container));
-
     container.appendChild(toolbar);
+  }
+
+  static toggleConfigPopup(container) {
+    const existing = container.querySelector(".party-sidebar-config-popup");
+    if (existing) {
+      existing.remove();
+      return;
+    }
+
+    const popup = document.createElement("div");
+    popup.className = "party-sidebar-config-popup";
+    popup.addEventListener("pointerdown", event => event.stopPropagation());
+
+    const size = Math.clamp(game.settings.get("party-sidebar", "portraitSize"), 75, 200);
+    const offset = Math.clamp(Number(game.settings.get("party-sidebar", "offsetY")) || 0, 0, 1000);
+
+    const addSlider = (labelText, min, max, value, suffix, onInput) => {
+      const group = document.createElement("label");
+      group.className = "party-sidebar-slider";
+      const header = document.createElement("span");
+      const label = document.createElement("span");
+      label.textContent = labelText;
+      const output = document.createElement("strong");
+      output.textContent = value + suffix;
+      header.append(label, output);
+      const input = document.createElement("input");
+      input.type = "range";
+      input.min = String(min);
+      input.max = String(max);
+      input.step = "1";
+      input.value = String(value);
+      input.addEventListener("input", () => {
+        output.textContent = input.value + suffix;
+        onInput(Number(input.value));
+      });
+      group.append(header, input);
+      popup.appendChild(group);
+    };
+
+    addSlider("Portrait size", 75, 200, size, " px", value => {
+      game.settings.set("party-sidebar", "portraitSize", value);
+      this.render();
+    });
+
+    addSlider("Vertical position", 0, 1000, offset, " px", value => {
+      game.settings.set("party-sidebar", "offsetY", value);
+      const layout = this.getLayout();
+      if (!layout.docked) {
+        const y = Math.clamp(value, 0, Math.max(0, window.innerHeight - container.offsetHeight));
+        this.saveLayout({ y });
+      } else {
+        this.applyLayout();
+      }
+    });
+
+    container.appendChild(popup);
   }
 
   static moveBy(dx, dy) {

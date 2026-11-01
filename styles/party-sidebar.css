@@ -142,64 +142,77 @@
   text-shadow: 0 0 4px rgba(79,195,255,0.8);
 }
 
-/* On-screen controls */
-#party-sidebar-container .party-sidebar-toolbar {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding: 4px;
-  border: 1px solid rgba(255,255,255,0.25);
-  border-radius: 6px;
-  background: rgba(20,20,20,0.88);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.45);
-  order: -1;
-}
-#party-sidebar-container.is-horizontal .party-sidebar-toolbar {
-  flex-direction: row;
-}
-#party-sidebar-container .party-sidebar-control {
-  width: 25px;
-  height: 25px;
-  padding: 0;
-  margin: 0;
-  border: 1px solid rgba(255,255,255,0.18);
-  border-radius: 4px;
-  color: #eee;
-  background: rgba(70,70,70,0.8);
-  cursor: pointer;
-  line-height: 1;
-}
-#party-sidebar-container .party-sidebar-control:hover {
-  color: #fff;
-  background: rgba(105,105,105,0.95);
-  box-shadow: 0 0 5px rgba(255,255,255,0.25);
-}
-#party-sidebar-container .party-sidebar-control.drag-handle {
-  cursor: grab;
-}
-#party-sidebar-container .party-sidebar-control.drag-handle:active {
-  cursor: grabbing;
-}
-#party-sidebar-container.is-locked .party-sidebar-toolbar .drag-handle {
-  opacity: 0.55;
-}
-#party-sidebar-container.is-free.is-locked .party-sidebar-toolbar .drag-handle {
-  cursor: not-allowed;
+
+/* =========================================================
+   Shared Action HUD / Roll Director visual theme
+   ========================================================= */
+#party-sidebar-container {
+  --ps-bg: #1c2427;
+  --ps-bg-raised: #252f32;
+  --ps-bg-deep: #111819;
+  --ps-border: #465854;
+  --ps-border-soft: rgba(128, 193, 178, .22);
+  --ps-text: #e7efec;
+  --ps-muted: #9ba9a5;
+  --ps-teal: #3f7c70;
+  --ps-teal-light: #80c1b2;
+  --ps-teal-dark: #2e645a;
+  --ps-gold: #e5b65e;
+  --ps-danger: #df9189;
+  --ps-shadow: 0 4px 14px rgba(0,0,0,.48);
 }
 
+/* Character name plates and image frames */
+#party-sidebar-container .party-entry .name {
+  color: var(--ps-text);
+  background: linear-gradient(180deg, rgba(37,47,50,.97), rgba(28,36,39,.98));
+  border: 1px solid var(--ps-border-soft);
+  border-bottom: 2px solid var(--ps-teal);
+  border-radius: 5px 5px 0 0;
+  text-shadow: 0 1px 2px rgba(0,0,0,.8);
+}
+#party-sidebar-container .party-portrait {
+  border: 1px solid rgba(128,193,178,.28);
+  border-radius: 0 0 7px 7px;
+  background: var(--ps-bg-deep);
+  box-shadow: var(--ps-shadow);
+}
+#party-sidebar-container .party-portrait:hover {
+  box-shadow: 0 0 0 1px var(--ps-teal-light), 0 4px 14px rgba(0,0,0,.55);
+}
+#party-sidebar-container .overlay {
+  color: var(--ps-text);
+  background: linear-gradient(180deg, rgba(17,24,25,.82), rgba(17,24,25,.96));
+  border-top: 1px solid rgba(128,193,178,.2);
+  text-shadow: 0 1px 2px rgba(0,0,0,.9);
+}
+#party-sidebar-container .temp-hp {
+  color: #80c1b2;
+  text-shadow: 0 0 4px rgba(128,193,178,.55);
+}
+#party-sidebar-container .hp-temp {
+  background: linear-gradient(to bottom, rgba(128,193,178,.68), rgba(63,124,112,0));
+}
+#party-sidebar-container .hp-loss {
+  background: linear-gradient(to top, rgba(199,90,74,.72), rgba(199,90,74,0));
+}
 
-/* Compact 2x2 toolbar, revealed only while hovering the party sidebar. */
+/* Compact toolbar */
 #party-sidebar-container .party-sidebar-toolbar {
   display: grid;
   grid-template-columns: repeat(2, 25px);
   grid-auto-rows: 25px;
   gap: 4px;
-  padding: 4px;
+  padding: 5px;
+  border: 1px solid var(--ps-border);
+  border-radius: 7px;
+  background: linear-gradient(180deg, rgba(37,47,50,.99), rgba(23,32,35,.98));
+  box-shadow: var(--ps-shadow);
+  order: -1;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
   transition: opacity 120ms ease, visibility 120ms ease;
-  order: -1;
 }
 #party-sidebar-container:hover .party-sidebar-toolbar,
 #party-sidebar-container:focus-within .party-sidebar-toolbar {
@@ -207,44 +220,93 @@
   visibility: visible;
   pointer-events: auto;
 }
-#party-sidebar-container .party-sidebar-control { width: 25px; height: 25px; }
-#party-sidebar-container .party-sidebar-config-popup {
-  position: absolute; top: 0; left: calc(100% + 8px); z-index: 10001;
-  width: 220px; padding: 10px 12px; border: 1px solid rgba(255,255,255,0.3);
-  border-radius: 7px; color: #eee; background: rgba(20,20,20,0.96);
-  box-shadow: 0 3px 12px rgba(0,0,0,0.65); display: flex; flex-direction: column; gap: 12px;
+#party-sidebar-container .party-sidebar-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  margin: 0;
+  border: 1px solid rgba(128,193,178,.2);
+  border-radius: 4px;
+  color: var(--ps-text);
+  background: linear-gradient(180deg, #303b3c, #202727);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035);
+  cursor: pointer;
+  line-height: 1;
+  transition: color 100ms ease, border-color 100ms ease, background 100ms ease, box-shadow 100ms ease;
 }
-#party-sidebar-container .party-sidebar-slider { display: flex; flex-direction: column; gap: 5px; font-size: 12px; font-weight: 600; }
-#party-sidebar-container .party-sidebar-slider > span { display: flex; justify-content: space-between; align-items: center; }
-#party-sidebar-container .party-sidebar-slider strong { color: #f0c674; font-variant-numeric: tabular-nums; }
-#party-sidebar-container .party-sidebar-slider input[type="range"] { width: 100%; margin: 0; accent-color: #d0a85c; }
-
-
-/* Keep the portrait image scaled to the live wrapper dimensions. */
-#party-sidebar-container .party-portrait > img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+#party-sidebar-container .party-sidebar-control:hover {
+  color: #f0f4f3;
+  border-color: var(--ps-teal-light);
+  background: linear-gradient(180deg, #3f7c70, #2e645a);
+  box-shadow: 0 0 0 1px rgba(128,193,178,.12), 0 2px 6px rgba(0,0,0,.3);
 }
-
-/* The popup uses viewport coordinates and does not follow sidebar movement. */
-#party-sidebar-container .party-sidebar-config-popup {
-  position: fixed;
+#party-sidebar-container .party-sidebar-control:active {
+  background: linear-gradient(180deg, #2e645a, #1c2427);
 }
-
-/* Make the current lock state unmistakable. */
+#party-sidebar-container .party-sidebar-control:focus-visible {
+  outline: 2px solid var(--ps-teal-light);
+  outline-offset: 2px;
+}
+#party-sidebar-container .party-sidebar-control.drag-handle {
+  cursor: grab;
+}
+#party-sidebar-container .party-sidebar-control.drag-handle:active {
+  cursor: grabbing;
+}
 #party-sidebar-container .party-sidebar-control.lock-control.is-locked {
-  color: #b6e3b6;
-  border-color: rgba(130, 205, 130, 0.65);
+  color: var(--ps-teal-light);
+  border-color: rgba(128,193,178,.5);
+  background: linear-gradient(180deg, rgba(63,124,112,.3), rgba(28,36,39,.96));
 }
 #party-sidebar-container .party-sidebar-control.lock-control.is-unlocked {
-  color: #ffd27a;
-  border-color: rgba(255, 190, 90, 0.75);
+  color: var(--ps-gold);
+  border-color: rgba(229,182,94,.52);
+  background: linear-gradient(180deg, rgba(229,182,94,.14), rgba(28,36,39,.96));
 }
 
+/* Configuration popup */
+#party-sidebar-container .party-sidebar-config-popup {
+  position: fixed;
+  z-index: 10001;
+  width: 220px;
+  padding: 11px 12px;
+  border: 1px solid var(--ps-border);
+  border-top: 2px solid var(--ps-teal);
+  border-radius: 7px;
+  color: var(--ps-text);
+  background: linear-gradient(180deg, rgba(37,47,50,.99), rgba(23,32,35,.99));
+  box-shadow: var(--ps-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+#party-sidebar-container .party-sidebar-slider {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: var(--ps-text);
+  font-size: 12px;
+  font-weight: 600;
+}
+#party-sidebar-container .party-sidebar-slider > span {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#party-sidebar-container .party-sidebar-slider strong {
+  color: var(--ps-gold);
+  font-variant-numeric: tabular-nums;
+}
+#party-sidebar-container .party-sidebar-slider input[type="range"] {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--ps-teal-light);
+}
 
-/* Collapsed mode: a single persistent expand button. */
+/* Collapsed one-icon state */
 #party-sidebar-container.is-collapsed {
   width: 38px;
   height: 38px;
@@ -259,19 +321,22 @@
   height: 38px;
   padding: 0;
   margin: 0;
-  border: 1px solid rgba(255,255,255,0.35);
-  border-radius: 8px;
-  color: #fff;
-  background: rgba(20,20,20,0.9);
-  box-shadow: 0 2px 9px rgba(0,0,0,0.6);
+  border: 1px solid var(--ps-border);
+  border-bottom: 2px solid var(--ps-teal);
+  border-radius: 7px;
+  color: var(--ps-teal-light);
+  background: linear-gradient(180deg, rgba(37,47,50,.99), rgba(17,24,25,.99));
+  box-shadow: var(--ps-shadow);
   font-size: 19px;
   cursor: pointer;
+  transition: color 100ms ease, border-color 100ms ease, background 100ms ease;
 }
 #party-sidebar-container.is-collapsed .party-sidebar-expand:hover {
-  color: #f0c674;
-  background: rgba(45,45,45,0.98);
+  color: var(--ps-text);
+  border-color: var(--ps-teal-light);
+  background: linear-gradient(180deg, #3f7c70, #2e645a);
 }
 #party-sidebar-container.is-collapsed .party-sidebar-expand:focus-visible {
-  outline: 2px solid #f0c674;
+  outline: 2px solid var(--ps-teal-light);
   outline-offset: 2px;
 }

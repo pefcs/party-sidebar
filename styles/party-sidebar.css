@@ -186,3 +186,35 @@
 #party-sidebar-container.is-free.is-locked .party-sidebar-toolbar .drag-handle {
   cursor: not-allowed;
 }
+
+
+/* Compact 2x2 toolbar, revealed only while hovering the party sidebar. */
+#party-sidebar-container .party-sidebar-toolbar {
+  display: grid;
+  grid-template-columns: repeat(2, 25px);
+  grid-auto-rows: 25px;
+  gap: 4px;
+  padding: 4px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 120ms ease, visibility 120ms ease;
+  order: -1;
+}
+#party-sidebar-container:hover .party-sidebar-toolbar,
+#party-sidebar-container:focus-within .party-sidebar-toolbar {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+#party-sidebar-container .party-sidebar-control { width: 25px; height: 25px; }
+#party-sidebar-container .party-sidebar-config-popup {
+  position: absolute; top: 0; left: calc(100% + 8px); z-index: 10001;
+  width: 220px; padding: 10px 12px; border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 7px; color: #eee; background: rgba(20,20,20,0.96);
+  box-shadow: 0 3px 12px rgba(0,0,0,0.65); display: flex; flex-direction: column; gap: 12px;
+}
+#party-sidebar-container .party-sidebar-slider { display: flex; flex-direction: column; gap: 5px; font-size: 12px; font-weight: 600; }
+#party-sidebar-container .party-sidebar-slider > span { display: flex; justify-content: space-between; align-items: center; }
+#party-sidebar-container .party-sidebar-slider strong { color: #f0c674; font-variant-numeric: tabular-nums; }
+#party-sidebar-container .party-sidebar-slider input[type="range"] { width: 100%; margin: 0; accent-color: #d0a85c; }

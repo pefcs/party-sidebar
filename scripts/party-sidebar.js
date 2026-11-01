@@ -118,6 +118,7 @@ class PartySidebar {
     const layout = this.getLayout();
     const size = Math.clamp(game.settings.get("party-sidebar", "portraitSize"), 75, 200);
     const actors = game.users.players.map(u => u.character).filter(Boolean);
+    const existingPopup = container.querySelector(".party-sidebar-config-popup");
 
     container.innerHTML = "";
     container.classList.toggle("is-horizontal", layout.orientation === "horizontal");
@@ -125,6 +126,7 @@ class PartySidebar {
     for (const actor of actors) container.appendChild(this.createPortrait(actor, size));
 
     this.createToolbar(container);
+    if (existingPopup) container.appendChild(existingPopup);
     this.applyLayout();
   }
 

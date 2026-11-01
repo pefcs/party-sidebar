@@ -11,3 +11,6 @@ Adds a customizable party sidebar to Foundry VTT, displaying character portraits
 - **Collapse:** turn the entire sidebar into a single party icon. Click that icon to restore the sidebar.
 
 Position, lock, dock, orientation, and collapsed/expanded preferences are stored per client and persist across reloads.
+
+## Visual theme
+The sidebar uses the shared Action HUD / Roll Director palette: charcoal surfaces, slate borders, teal accents, off-white text, and warm gold highlights.

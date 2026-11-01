@@ -2,17 +2,24 @@
   position: fixed;
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
   gap: 6px;
   z-index: 100;
+  width: max-content;
+  user-select: none;
 }
 
-/* ENTRY */
+#party-sidebar-container.is-horizontal {
+  flex-direction: row;
+  align-items: flex-start;
+}
+
 #party-sidebar-container .party-entry {
   display: flex;
   flex-direction: column;
+  flex: 0 0 auto;
 }
 
-/* PORTRAIT */
 #party-sidebar-container .party-portrait {
   position: relative;
   border-radius: 8px;
@@ -27,7 +34,6 @@
   box-shadow: 0 0 10px rgba(255,255,255,0.2);
 }
 
-/* NAME */
 #party-sidebar-container .name {
   text-align: center;
   font-size: 11px;
@@ -41,7 +47,6 @@
   text-overflow: ellipsis;
 }
 
-/* STATS */
 #party-sidebar-container .overlay {
   position: absolute;
   bottom: 0;
@@ -54,21 +59,18 @@
   z-index: 2;
 }
 
-/* MOVEMENT ICON */
 #party-sidebar-container .overlay .move-icon-wrapper {
   display: inline-flex;
   width: 14px;
   height: 14px;
   margin-left: 2px;
 }
-
 #party-sidebar-container .overlay .move-icon-wrapper img {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
 
-/* EFFECTS LAYOUT */
 #party-sidebar-container .effects-container {
   position: absolute;
   top: 2px;
@@ -79,20 +81,16 @@
   pointer-events: none;
   z-index: 3;
 }
-
 #party-sidebar-container .effects-col {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
-
-/* EFFECT ICON */
 #party-sidebar-container .effect-icon-wrapper {
   position: relative;
   width: var(--effect-size);
   height: var(--effect-size);
 }
-
 #party-sidebar-container .effect-icon-wrapper img {
   width: 100%;
   height: 100%;
@@ -101,30 +99,19 @@
   border-radius: 3px;
   padding: 1px;
 }
-
-/* EFFECT TIMER */
 #party-sidebar-container .effect-timer {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  
   font-size: calc(var(--effect-size) * 0.45);
   font-weight: 700;
   color: #fff;
-
-  background: linear-gradient(
-    to bottom,
-    rgba(0,0,0,0.85),
-    rgba(0,0,0,0.5)
-  );
-
+  background: linear-gradient(to bottom, rgba(0,0,0,0.85), rgba(0,0,0,0.5));
   border-radius: 3px;
   padding: 0 2px;
   text-shadow: 0 0 3px rgba(0,0,0,0.8);
 }
-
-/* OVERFLOW COUNTER */
 #party-sidebar-container .effects-more {
   font-size: 10px;
   color: white;
@@ -132,42 +119,70 @@
   border-radius: 3px;
   text-align: center;
 }
-
-/* HP DAMAGE */
 #party-sidebar-container .hp-loss {
   position: absolute;
   bottom: 0;
   width: 100%;
   pointer-events: none;
-
-  background: linear-gradient(
-    to top,
-    rgba(255, 0, 0, 0.8),
-    rgba(255, 0, 0, 0)
-  );
-
+  background: linear-gradient(to top, rgba(255, 0, 0, 0.8), rgba(255, 0, 0, 0));
   transition: height 0.2s ease, opacity 0.2s ease;
 }
-
-/* TEMP HP */
 #party-sidebar-container .hp-temp {
   position: absolute;
   top: 0;
   width: 100%;
   pointer-events: none;
   z-index: 1;
-
-  background: linear-gradient(
-    to bottom,
-    rgba(0,150,255,0.7),
-    rgba(0,150,255,0)
-  );
-
+  background: linear-gradient(to bottom, rgba(0,150,255,0.7), rgba(0,150,255,0));
   transition: height 0.2s ease;
 }
-
 #party-sidebar-container .temp-hp {
   color: #4fc3ff;
   font-weight: 700;
   text-shadow: 0 0 4px rgba(79,195,255,0.8);
+}
+
+/* On-screen controls */
+#party-sidebar-container .party-sidebar-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 4px;
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 6px;
+  background: rgba(20,20,20,0.88);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.45);
+  order: -1;
+}
+#party-sidebar-container.is-horizontal .party-sidebar-toolbar {
+  flex-direction: row;
+}
+#party-sidebar-container .party-sidebar-control {
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  margin: 0;
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 4px;
+  color: #eee;
+  background: rgba(70,70,70,0.8);
+  cursor: pointer;
+  line-height: 1;
+}
+#party-sidebar-container .party-sidebar-control:hover {
+  color: #fff;
+  background: rgba(105,105,105,0.95);
+  box-shadow: 0 0 5px rgba(255,255,255,0.25);
+}
+#party-sidebar-container .party-sidebar-control.drag-handle {
+  cursor: grab;
+}
+#party-sidebar-container .party-sidebar-control.drag-handle:active {
+  cursor: grabbing;
+}
+#party-sidebar-container.is-locked .party-sidebar-toolbar .drag-handle {
+  opacity: 0.55;
+}
+#party-sidebar-container.is-free.is-locked .party-sidebar-toolbar .drag-handle {
+  cursor: not-allowed;
 }

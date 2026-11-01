@@ -11,7 +11,7 @@ Hooks.once("init", function () {
     type: Number,
     default: 100,
     range: { min: 75, max: 200, step: 1 },
-    onChange: () => PartySidebar.render()
+    onChange: value => PartySidebar.applyPortraitSize(value)
   });
 
   game.settings.register("party-sidebar", "offsetY", {
@@ -20,7 +20,7 @@ Hooks.once("init", function () {
     config: true,
     type: Number,
     default: 200,
-    onChange: () => PartySidebar.render()
+    onChange: () => PartySidebar.applyLayout()
   });
 
   game.settings.register("party-sidebar", "layout", {
@@ -172,23 +172,23 @@ class PartySidebar {
         } else {
           this.saveLayout({ locked: !current.locked });
         }
-        this.render();
+        this.updateToolbarControls(container);
       },
       () => {
         this.saveLayout({ docked: true, locked: true, x: null, y: null });
-        this.render();
+        this.updateToolbarControls(container);
       }
     );
-    lockButton.classList.add("dock-control");
+    lockButton.classList.add("dock-control", "lock-control");
+    lockButton.classList.toggle("is-locked", layout.locked);
+    lockButton.classList.toggle("is-unlocked", !layout.locked);
 
-    makeButton(
+    const orientationButton = makeButton(
       layout.orientation === "vertical" ? '<i class="fa-solid fa-left-right"></i>' : '<i class="fa-solid fa-up-down"></i>',
       layout.orientation === "vertical" ? "Switch to horizontal layout" : "Switch to vertical layout",
-      () => {
-        this.saveLayout({ orientation: layout.orientation === "vertical" ? "horizontal" : "vertical" });
-        this.render();
-      }
+      () => this.toggleOrientation(container)
     );
+    orientationButton.classList.add("orientation-control");
 
     makeButton('<i class="fa-solid fa-sliders"></i>', "Party Sidebar configuration", () => {
       this.toggleConfigPopup(container);
@@ -250,7 +250,82 @@ class PartySidebar {
       }
     });
 
+    // Position the popup against the viewport, not against the sidebar.
+    // Once opened, it stays where it was opened even if the sidebar is moved.
+    const anchor = container.getBoundingClientRect();
+    popup.style.position = "fixed";
+    popup.style.top = Math.max(8, anchor.top) + "px";
+    popup.style.left = Math.max(8, anchor.right + 8) + "px";
     container.appendChild(popup);
+
+    const popupRect = popup.getBoundingClientRect();
+    let popupLeft = anchor.right + 8;
+    if (popupLeft + popupRect.width > window.innerWidth - 8) {
+      popupLeft = anchor.left - popupRect.width - 8;
+    }
+    popupLeft = Math.clamp(popupLeft, 8, Math.max(8, window.innerWidth - popupRect.width - 8));
+    const popupTop = Math.clamp(anchor.top, 8, Math.max(8, window.innerHeight - popupRect.height - 8));
+    popup.style.left = popupLeft + "px";
+    popup.style.top = popupTop + "px";
+  }
+
+  static applyPortraitSize(value = game.settings.get("party-sidebar", "portraitSize")) {
+    const size = Math.clamp(Number(value) || 100, 75, 200);
+    const container = this.getContainer();
+    if (!container) return;
+
+    // Resize existing nodes instead of rebuilding the actor portraits. This
+    // keeps slider input responsive and preserves the open configuration popup.
+    for (const entry of container.querySelectorAll(".party-entry")) {
+      entry.style.width = size + "px";
+    }
+    for (const portrait of container.querySelectorAll(".party-portrait")) {
+      portrait.style.width = size + "px";
+      portrait.style.height = size + "px";
+    }
+    for (const effects of container.querySelectorAll(".effects-container")) {
+      effects.style.setProperty("--effect-size", Math.max(12, Math.floor(size * 0.22)) + "px");
+    }
+    this.applyLayout();
+  }
+
+  static updateToolbarControls(container = this.getContainer()) {
+    if (!container) return;
+    const layout = this.getLayout();
+    const lockButton = container.querySelector(".lock-control");
+    if (lockButton) {
+      lockButton.innerHTML = layout.locked
+        ? '<i class="fa-solid fa-lock"></i>'
+        : '<i class="fa-solid fa-lock-open"></i>';
+      lockButton.classList.toggle("is-locked", layout.locked);
+      lockButton.classList.toggle("is-unlocked", !layout.locked);
+      lockButton.title = layout.locked ? "Locked — click to unlock" : "Unlocked — click to lock";
+      lockButton.setAttribute("aria-label", lockButton.title);
+    }
+
+    const orientationButton = container.querySelector(".orientation-control");
+    if (orientationButton) {
+      orientationButton.innerHTML = layout.orientation === "vertical"
+        ? '<i class="fa-solid fa-left-right"></i>'
+        : '<i class="fa-solid fa-up-down"></i>';
+      orientationButton.title = layout.orientation === "vertical"
+        ? "Switch to horizontal layout"
+        : "Switch to vertical layout";
+      orientationButton.setAttribute("aria-label", orientationButton.title);
+    }
+
+    container.classList.toggle("is-horizontal", layout.orientation === "horizontal");
+    container.classList.toggle("is-free", !layout.docked);
+    container.classList.toggle("is-locked", layout.locked);
+  }
+
+  static toggleOrientation(container = this.getContainer()) {
+    const layout = this.getLayout();
+    const orientation = layout.orientation === "vertical" ? "horizontal" : "vertical";
+    this.saveLayout({ orientation });
+    // Do not call render(): all existing portrait nodes remain in place.
+    this.updateToolbarControls(container);
+    this.applyLayout();
   }
 
   static moveBy(dx, dy) {

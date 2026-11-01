@@ -25,3 +25,7 @@
 - Added a toolbar control to collapse the party sidebar into a single party icon.
 - Clicking the collapsed icon restores the full party sidebar.
 - Collapsed/expanded state is saved per client and persists across reloads.
+
+## 1.2.4
+- Updated the Party Sidebar visual theme to match Action HUD and Roll Director.
+- Unified charcoal surfaces, slate borders, teal accents, warm gold highlights, and interaction states across the toolbar, popup, portrait labels, and collapsed icon.

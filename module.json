@@ -2,7 +2,7 @@
   "id": "party-sidebar",
   "title": "Party Sidebar",
   "description": "A dynamic party sidebar with draggable positioning, dock/lock controls, fast orientation switching, responsive configuration, persistent collapse, and a shared Action HUD/Roll Director visual theme.",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "authors": [
     {
       "name": "Party Sidebar contributors"
@@ -15,7 +15,7 @@
   "download": "https://github.com/pefcs/party-sidebar/releases/latest/download/module.zip",
   "compatibility": {
     "minimum": "14.369",
-    "verified": "14.369",
+    "verified": "14.370",
     "maximum": "14.999"
   },
   "relationships": {
@@ -25,7 +25,8 @@
         "type": "system",
         "compatibility": {
           "minimum": "6.0.6",
-          "maximum": "6.0.999"
+          "verified": "6.1.1",
+          "maximum": "6.1.999"
         }
       }
     ]

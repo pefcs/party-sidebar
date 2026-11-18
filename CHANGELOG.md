@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.5
+- Updated compatibility metadata for Foundry VTT 14.370 and D&D 5e 6.1.1.
+
 ## 1.2.0
 - Added an on-screen toolbar for layout controls.
 - Added draggable free positioning and a lock/unlock control.
